@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeIQ — ATS Resume Intelligence</title>
+  <link rel="stylesheet" href="/static/css/styles.css?v=layout3" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <span>ResumeIQ</span>
+        </div>
+        <span class="badge">AI/ML · NLP · Ranking</span>
+      </div>
+      <div class="header-right">
+        <button id="themeToggle" class="btn-icon" title="Toggle theme" aria-label="Toggle theme">
+          <svg id="sunIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg id="moonIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="input-panel">
+        <div class="panel-card">
+          <h2>Your resume</h2>
+          <div id="dropZone" class="drop-zone">
+            <input type="file" id="resumeFile" accept=".pdf,.txt,.docx" hidden />
+            <div class="drop-content">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <p>Drop your resume here</p>
+              <span>or browse files · PDF, DOCX, TXT · up to 10 MB</span>
+            </div>
+            <div id="fileInfo" class="file-info hidden"></div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <h2>Target job description</h2>
+          <textarea id="jobDescription" placeholder="Paste the job description you want to match against..." rows="12"></textarea>
+          <div class="char-count"><span id="charCount">0</span> characters</div>
+        </div>
+
+        <button id="analyzeBtn" class="btn-primary" disabled>
+          <span class="btn-text">Analyze Resume</span>
+          <span class="btn-loader hidden">
+            <span class="spinner"></span> Analyzing...
+          </span>
+        </button>
+      </section>
+
+      <section class="results-panel hidden" id="resultsPanel">
+        <div class="results-header">
+          <h2>Resume analysis</h2>
+          <span id="processTime" class="process-time"></span>
+        </div>
+
+        <div class="score-grid">
+          <div class="score-card overall">
+            <div class="score-label">ATS Score</div>
+            <div class="score-value" id="overallScore">—</div>
+            <div class="score-ring">
+              <svg viewBox="0 0 36 36">
+                <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <path class="ring-fill" id="scoreRing" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              </svg>
+            </div>
+          </div>
+          <div class="score-card">
+            <div class="score-label">Similarity</div>
+            <div class="score-value secondary" id="similarityScore">—</div>
+          </div>
+          <div class="score-card">
+            <div class="score-label">Skill Match</div>
+            <div class="score-value secondary" id="skillMatchScore">—</div>
+          </div>
+          <div class="score-card">
+            <div class="score-label">Ranking</div>
+            <div class="score-value secondary" id="rankingScore">—</div>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h3>Candidate Profile</h3>
+            <div id="candidateProfile" class="profile-content"></div>
+          </div>
+
+          <div class="detail-card">
+            <h3>ATS Breakdown</h3>
+            <div id="atsBreakdown" class="bars"></div>
+          </div>
+
+          <div class="detail-card">
+            <h3>Domain Classification</h3>
+            <div id="domainInfo"></div>
+          </div>
+
+          <div class="detail-card">
+            <h3>Matched Skills</h3>
+            <div id="matchedSkills" class="skill-tags"></div>
+          </div>
+
+          <div class="detail-card full">
+            <h3>Skills to strengthen</h3>
+            <div id="missingSkills" class="skill-tags gap"></div>
+          </div>
+
+          <div class="detail-card full">
+            <h3>Recommendations</h3>
+            <ul id="recommendations" class="recs-list"></ul>
+          </div>
+
+          <div class="detail-card full">
+            <h3>Relevant keywords</h3>
+            <div id="matchedKeywords" class="skill-tags keywords"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+  </div>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
